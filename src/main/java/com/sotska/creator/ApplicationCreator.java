@@ -1,15 +1,15 @@
 package com.sotska.creator;
 
-import com.sotska.loader.ServletClassLoaderService;
 import com.sotska.entity.Application;
 import com.sotska.entity.ApplicationSettings;
+import com.sotska.loader.ServletClassLoaderService;
+import jakarta.servlet.http.HttpServlet;
 
-import javax.servlet.http.HttpServlet;
 import java.lang.reflect.Constructor;
+import java.net.URLClassLoader;
 import java.nio.file.FileSystems;
 import java.util.Map;
 
-import static com.sotska.service.ApplicationListener.APPS_PATH;
 import static java.util.stream.Collectors.toMap;
 
 public class ApplicationCreator {
@@ -23,16 +23,15 @@ public class ApplicationCreator {
 
         Application application = new Application();
         application.setPathServletMap(pathServletMap);
-        application.setAppName(applicationPath.substring((APPS_PATH + SEPARATOR).length()));
+        application.setAppName(applicationPath.substring(applicationPath.lastIndexOf(SEPARATOR) + SEPARATOR.length()));
 
         return application;
     }
 
     private HttpServlet createInstance(String appPath, String servletPath) {
         try {
-            ClassLoader classLoader = new ServletClassLoaderService().getClassLoader(appPath);
+            URLClassLoader classLoader = new ServletClassLoaderService().getClassLoader(appPath);
             Class<?> servletClass = classLoader.loadClass(servletPath);
-
             Constructor<?> constructor = servletClass.getConstructor();
 
             return (HttpServlet) constructor.newInstance();

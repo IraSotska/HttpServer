@@ -1,64 +1,23 @@
 package com.sotska.entity;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+
 import java.io.*;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class Request implements HttpServletRequest {
 
-    private String method;
-    private String requestURI;
-    private String contextPath;
-    private Map<String, String> parameters = new HashMap<>();
-    private HttpSession session;
     private InputStream inputStream;
-
-    private String servletPath;
-
+    private String requestURI;
+    private String method;
+    private String contextPath;
     private final Map<String, String> headers = new HashMap<>();
 
-    public void addHeader(String name, String value) {
-        headers.put(name, value);
-    }
+    private HttpSession session;
 
-    @Override
-    public Enumeration<?> getHeaderNames() {
-        return java.util.Collections.enumeration(headers.keySet());
-    }
-    public void setServletPath(String servletPath) {
-        this.servletPath = servletPath;
-    }
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public void setRequestURI(String requestURI) {
-        this.requestURI = requestURI;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
-
-    public void setParameter(String name, String value) {
-        parameters.put(name, value);
-    }
+    private Map<String, String> parameters = new HashMap<>();
 
     @Override
     public String getAuthType() {
@@ -77,12 +36,17 @@ public class Request implements HttpServletRequest {
 
     @Override
     public String getHeader(String s) {
-        return null;
+        return headers.get(s);
     }
 
     @Override
-    public Enumeration getHeaders(String s) {
-        return null;
+    public Enumeration<String> getHeaders(String s) {
+        return java.util.Collections.enumeration(headers.values());
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        return java.util.Collections.enumeration(headers.keySet());
     }
 
     @Override
@@ -102,26 +66,6 @@ public class Request implements HttpServletRequest {
 
     @Override
     public String getPathTranslated() {
-        return null;
-    }
-
-    @Override
-    public String getRequestURI() {
-        return requestURI;
-    }
-
-    @Override
-    public StringBuffer getRequestURL() {
-        return null;
-    }
-
-    @Override
-    public String getServletPath() {
-        return null;
-    }
-
-    @Override
-    public HttpSession getSession(boolean b) {
         return null;
     }
 
@@ -156,12 +100,92 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    @Override
+    public StringBuffer getRequestURL() {
+        return null;
+    }
+
+    @Override
+    public String getServletPath() {
+        return null;
+    }
+
+    @Override
+    public HttpSession getSession(boolean b) {
+        return session;
+    }
+
+    @Override
+    public HttpSession getSession() {
+        return null;
+    }
+
+    @Override
+    public String changeSessionId() {
+        return null;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdValid() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromCookie() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromURL() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromUrl() {
+        return false;
+    }
+
+    @Override
+    public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        return false;
+    }
+
+    @Override
+    public void login(String s, String s1) throws ServletException {
+
+    }
+
+    @Override
+    public void logout() throws ServletException {
+
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
+    public Part getPart(String s) throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
     public Object getAttribute(String s) {
         return null;
     }
 
     @Override
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return null;
     }
 
@@ -181,47 +205,73 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
+    public long getContentLengthLong() {
+        return 0;
+    }
+
+    @Override
     public String getContentType() {
         return null;
     }
 
     @Override
-    public ServletInputStream getInputStream() {
-
+    public ServletInputStream getInputStream() throws IOException {
         return new ServletInputStream() {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setReadListener(ReadListener readListener) {
+
+            }
 
             @Override
             public int read() throws IOException {
                 return inputStream.read();
             }
+
             @Override
             public long transferTo(OutputStream out) throws IOException {
                 return inputStream.transferTo(out);
             }
+
             @Override
             public int read(byte b[]) throws IOException {
                 return inputStream.read(b);
             }
+
             @Override
             public int read(byte b[], int off, int len) throws IOException {
                 return inputStream.read(b, off, len);
             }
+
             @Override
             public byte[] readAllBytes() throws IOException {
                 return inputStream.readAllBytes();
             }
+
             @Override
             public byte[] readNBytes(int len) throws IOException {
                 return inputStream.readNBytes(len);
             }
+
             @Override
             public int readNBytes(byte[] b, int off, int len) throws IOException {
                 return inputStream.readNBytes(b, off, len);
             }
+
             @Override
             public long skip(long n) throws IOException {
                 return inputStream.skip(n);
             }
+
             @Override
             public void skipNBytes(long n) throws IOException {
                 inputStream.skipNBytes(n);
@@ -230,13 +280,12 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public String getParameter(String name) {
-        return "hello";
-//                parameters.get(name);
+    public String getParameter(String s) {
+        return parameters.get(s);
     }
 
     @Override
-    public Enumeration getParameterNames() {
+    public Enumeration<String> getParameterNames() {
         return java.util.Collections.enumeration(parameters.keySet());
     }
 
@@ -246,7 +295,7 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public Map getParameterMap() {
+    public Map<String, String[]> getParameterMap() {
         return null;
     }
 
@@ -271,7 +320,7 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public BufferedReader getReader() {
+    public BufferedReader getReader() throws IOException {
         return new BufferedReader(new InputStreamReader(inputStream));
     }
 
@@ -301,7 +350,7 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public Enumeration getLocales() {
+    public Enumeration<Locale> getLocales() {
         return null;
     }
 
@@ -341,28 +390,50 @@ public class Request implements HttpServletRequest {
     }
 
     @Override
-    public HttpSession getSession() {
-        return session;
+    public ServletContext getServletContext() {
+        return null;
     }
 
     @Override
-    public boolean isRequestedSessionIdValid() {
+    public AsyncContext startAsync() throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
         return false;
     }
 
     @Override
-    public boolean isRequestedSessionIdFromCookie() {
+    public boolean isAsyncSupported() {
         return false;
     }
 
     @Override
-    public boolean isRequestedSessionIdFromURL() {
-        return false;
+    public AsyncContext getAsyncContext() {
+        return null;
     }
 
     @Override
-    public boolean isRequestedSessionIdFromUrl() {
-        return false;
+    public DispatcherType getDispatcherType() {
+        return null;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
+    }
+
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
     }
 
     public void setSession(HttpSession session) {

@@ -1,77 +1,29 @@
 package com.sotska.entity;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 public class Response implements HttpServletResponse {
 
-    private int status;
-    private final Map<String, String> headers = new HashMap<>();
     private OutputStream outputStream;
+    private int status;
 
-    public Response() {
-    }
+    private PrintWriter printWriter;
+    private final Map<String, String> headers = new HashMap<>();
 
     public Response(OutputStream outputStream) {
         this.outputStream = outputStream;
-    }
-
-    @Override
-    public void setStatus(int sc) {
-        this.status = sc;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setHeader(String name, String value) {
-        headers.put(name, value);
-    }
-
-    public String getHeader(String name) {
-        return headers.get(name);
-    }
-
-    public Set<String> getHeaderNames() {
-        return headers.keySet();
-    }
-
-    @Override
-    public ServletOutputStream getOutputStream() {
-        return new ServletOutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                outputStream.write(b);
-            }
-
-            @Override
-            public void flush() throws IOException {
-                outputStream.flush();
-            }
-
-            @Override
-            public void close() throws IOException {
-                outputStream.close();
-            }
-
-            @Override
-            public void write(byte b[], int off, int len) throws IOException {
-                outputStream.write(b, off, len);
-            }
-
-            @Override
-            public void write(byte b[]) throws IOException {
-                outputStream.write(b);
-            }
-        };
     }
 
     @Override
@@ -121,28 +73,61 @@ public class Response implements HttpServletResponse {
 
     @Override
     public void setDateHeader(String s, long l) {
+
     }
 
     @Override
     public void addDateHeader(String s, long l) {
+
     }
 
+    @Override
+    public void setHeader(String name, String value) {
+        headers.put(name, value);
+    }
 
     @Override
     public void addHeader(String s, String s1) {
+
     }
 
     @Override
     public void setIntHeader(String s, int i) {
+
     }
 
     @Override
     public void addIntHeader(String s, int i) {
+
     }
 
+    @Override
+    public void setStatus(int i) {
+        this.status = i;
+    }
 
     @Override
     public void setStatus(int i, String s) {
+        this.status = i;
+    }
+
+    @Override
+    public int getStatus() {
+        return 0;
+    }
+
+    public String getHeader(String name) {
+        return headers.get(name);
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
     }
 
     @Override
@@ -155,22 +140,76 @@ public class Response implements HttpServletResponse {
         return null;
     }
 
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+
+        System.out.println("Hello getOutputStream");
+
+        return new ServletOutputStream() {
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener writeListener) {
+
+            }
+
+            @Override
+            public void write(int b) throws IOException {
+                System.out.println("Hello wri");
+                outputStream.write(b);
+            }
+
+            @Override
+            public void flush() throws IOException {
+                outputStream.flush();
+            }
+
+            @Override
+            public void close() throws IOException {
+                outputStream.close();
+            }
+
+            @Override
+            public void write(byte b[], int off, int len) throws IOException {
+                System.out.println("Hello write");
+                outputStream.write(b, off, len);
+            }
+
+            @Override
+            public void write(byte b[]) throws IOException {
+                System.out.println("Hello writeee");
+                outputStream.write(b);
+            }
+        };
+    }
 
     @Override
     public PrintWriter getWriter() {
-        return new PrintWriter(outputStream);
+        printWriter = new PrintWriter(outputStream);
+        return printWriter;
     }
 
     @Override
     public void setCharacterEncoding(String s) {
+
     }
 
     @Override
     public void setContentLength(int i) {
+
+    }
+
+    @Override
+    public void setContentLengthLong(long l) {
+
     }
 
     @Override
     public void setContentType(String s) {
+
     }
 
     @Override
@@ -185,11 +224,13 @@ public class Response implements HttpServletResponse {
 
     @Override
     public void flushBuffer() throws IOException {
-
+        printWriter.flush();
+        outputStream.flush();
     }
 
     @Override
     public void resetBuffer() {
+
     }
 
     @Override

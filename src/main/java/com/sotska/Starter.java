@@ -1,20 +1,22 @@
 package com.sotska;
 
 import com.sotska.creator.ApplicationCreator;
-import com.sotska.parser.ApplicationSettingsParser;
-import com.sotska.repository.ApplicationServletRepository;
-import com.sotska.service.ApplicationService;
+import com.sotska.parser.ApplicationWebXmlParser;
+import com.sotska.repository.ApplicationRepository;
+import com.sotska.service.ApplicationDeploymentService;
+import com.sotska.service.ApplicationListener;
 import com.sotska.service.HttpServer;
 import com.sotska.service.UnzipService;
-import com.sotska.service.ApplicationListener;
 
 public class Starter {
     public static void main(String[] args) {
-        ApplicationServletRepository applicationServletRepository = new ApplicationServletRepository();
-        ApplicationService applicationService = new ApplicationService(applicationServletRepository, new UnzipService(),
-                new ApplicationSettingsParser(), new ApplicationCreator());
+        ApplicationRepository applicationRepository = new ApplicationRepository();
+        ApplicationDeploymentService applicationDeploymentService = new ApplicationDeploymentService(applicationRepository, new UnzipService(),
+                new ApplicationWebXmlParser(), new ApplicationCreator());
 
-        new ApplicationListener(applicationService).start();
-        new HttpServer(applicationServletRepository).start();
+        applicationDeploymentService.deployCurrentApplications();
+
+        new Thread(new ApplicationListener(applicationDeploymentService)).start();
+        new HttpServer(applicationRepository).start();
     }
 }

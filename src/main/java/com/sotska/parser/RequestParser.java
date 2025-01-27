@@ -24,6 +24,10 @@ public class RequestParser {
 
     private static void injectMethodAndUri(BufferedReader bufferedReader, Request request) throws IOException {
         String line = bufferedReader.readLine();
+
+        if (line == null) {
+            throw new RuntimeException("Not correct request format.");
+        }
         request.setMethod(line.substring(0, line.indexOf(SPACE)));
         request.setRequestURI(line.substring(line.indexOf(SEPARATOR) + SEPARATOR.length(), line.lastIndexOf(SPACE)));
     }

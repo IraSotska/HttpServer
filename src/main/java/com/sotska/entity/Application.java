@@ -1,6 +1,7 @@
 package com.sotska.entity;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
+
 import java.util.Map;
 
 public class Application {

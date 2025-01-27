@@ -7,15 +7,18 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ApplicationSettingsParser {
+public class ApplicationWebXmlParser {
 
-    public static final String SERVLET_TAG = "servlet";
-    public static final String SERVLET_MAPPING_TAG = "servlet-mapping";
-    public static final String SERVLET_CLASS_TAG = "servlet-class";
-    public static final String SERVLET_NAME_TAG = "servlet-name";
-    public static final String URL_PATTERN_TAG = "url-pattern";
+    private static final String SERVLET_TAG = "servlet";
+    private static final String SERVLET_MAPPING_TAG = "servlet-mapping";
+    private static final String SERVLET_CLASS_TAG = "servlet-class";
+    private static final String SERVLET_NAME_TAG = "servlet-name";
+    private static final String URL_PATTERN_TAG = "url-pattern";
+
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
     public ApplicationSettings parse(String applicationPath) {
         File file = new File(applicationPath + "/WEB-INF/web.xml");
@@ -29,7 +32,7 @@ public class ApplicationSettingsParser {
 
     private Map<String, String> parseFile(File xmlFile) {
         try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
+            Document document = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(xmlFile);
             document.getDocumentElement().normalize();
 
             Map<String, String> servletNameSettingsMap = new HashMap<>();

@@ -6,14 +6,14 @@ import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
-public class ApplicationListener extends Thread {
+public class ApplicationListener implements Runnable {
     public static final String APPS_PATH = "apps";
     public static final String SEPARATOR = FileSystems.getDefault().getSeparator();
     public static final String WAR_EXTENSION = ".war";
-    private final ApplicationService applicationService;
+    private final ApplicationDeploymentService applicationDeploymentService;
 
-    public ApplicationListener(ApplicationService applicationService) {
-        this.applicationService = applicationService;
+    public ApplicationListener(ApplicationDeploymentService applicationDeploymentService) {
+        this.applicationDeploymentService = applicationDeploymentService;
     }
 
     @Override
@@ -27,7 +27,6 @@ public class ApplicationListener extends Thread {
                 poll = pollEvents(watchService);
             }
         } catch (IOException | InterruptedException | ClosedWatchServiceException e) {
-            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -47,11 +46,11 @@ public class ApplicationListener extends Thread {
             return;
         }
         if (kind == ENTRY_CREATE) {
-            applicationService.create(APPS_PATH + SEPARATOR + applicationName);
+            applicationDeploymentService.create(Paths.get(APPS_PATH, applicationName).toString());
         } else if (kind == ENTRY_MODIFY) {
-            applicationService.update(applicationName);
+            applicationDeploymentService.update(applicationName);
         } else if (kind == ENTRY_DELETE) {
-            applicationService.remove(applicationName);
+            applicationDeploymentService.remove(applicationName);
         }
     }
 }
