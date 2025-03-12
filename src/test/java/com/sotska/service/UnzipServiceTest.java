@@ -25,7 +25,7 @@ class UnzipServiceTest {
     private static final Map<String, List<String>> INNER_DIRS = Map.of(META_INF,
             List.of("MANIFEST.MF", "maven/com.sotska/summer-homework/pom.xml",
                     "maven/com.sotska/summer-homework/pom.properties"), WEB_INF,
-            List.of("WEB-INF/web.xml", "classes/com/sotska/web/servlet/GoodbyeServlet.class",
+            List.of("classes/com/sotska/web/servlet/GoodbyeServlet.class",
                     "classes/com/sotska/web/servlet/HelloServlet.class"));
     private static final List<String> EXPECTED_WAR_FILES = List.of(META_INF, WEB_INF);
 

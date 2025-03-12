@@ -2,6 +2,7 @@ package com.sotska.service;
 
 import com.sotska.executor.RequestExecutor;
 import com.sotska.repository.ApplicationRepository;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HttpServer {
-    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
     public static final int PORT = 8080;
 
     private final ApplicationRepository applicationRepository;
@@ -20,7 +21,7 @@ public class HttpServer {
     }
 
     public void start() {
-        logger.info("Server started by port: {}", PORT);
+        LOGGER.info("Server started by port: {}", PORT);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
@@ -30,13 +31,10 @@ public class HttpServer {
                      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 ) {
                     new RequestExecutor(applicationRepository).execute(reader, outputStream);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            start();
+        } catch (IOException | ServletException e) {
+            LOGGER.error(e.getCause() + " while processing request: " + e.getMessage());
         }
     }
 }

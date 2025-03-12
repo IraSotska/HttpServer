@@ -24,11 +24,11 @@ class ApplicationWebXmlParserTest {
         ApplicationSettings result = applicationWebXmlParser.parse(TEST_RESOURCES_PATH);
         assertNotNull(result);
         assertEquals("resources", result.getName());
-        assertEquals(2, result.getUrlServletPathMap().size());
-        assertTrue(result.getUrlServletPathMap().containsKey(FIRST_KEY));
-        assertTrue(result.getUrlServletPathMap().containsKey(SECOND_KEY));
-        assertEquals("/goodbye", result.getUrlServletPathMap().get(FIRST_KEY));
-        assertEquals("/hello", result.getUrlServletPathMap().get(SECOND_KEY));
+        assertEquals(2, result.getServletNameToUrlMap().size());
+        assertTrue(result.getServletNameToUrlMap().containsKey(FIRST_KEY));
+        assertTrue(result.getServletNameToUrlMap().containsKey(SECOND_KEY));
+        assertEquals("/goodbye", result.getServletNameToUrlMap().get(FIRST_KEY));
+        assertEquals("/hello", result.getServletNameToUrlMap().get(SECOND_KEY));
     }
 
     @Test

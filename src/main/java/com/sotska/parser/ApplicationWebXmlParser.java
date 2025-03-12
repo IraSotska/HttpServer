@@ -27,27 +27,27 @@ public class ApplicationWebXmlParser {
         }
 
         String appName = new File(applicationPath).getName();
-        return new ApplicationSettings(appName, parseFile(file));
+        return new ApplicationSettings(appName, parseWebXml(file));
     }
 
-    private Map<String, String> parseFile(File xmlFile) {
+    private Map<String, String> parseWebXml(File xmlFile) {
         try {
             Document document = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(xmlFile);
             document.getDocumentElement().normalize();
 
-            Map<String, String> servletNameSettingsMap = new HashMap<>();
+            Map<String, String> servletNameToUrlMap = new HashMap<>();
 
             NodeList servletList = document.getElementsByTagName(SERVLET_TAG);
             NodeList servletMappingList = document.getElementsByTagName(SERVLET_MAPPING_TAG);
 
-            parseNodes(servletList, servletMappingList, servletNameSettingsMap);
-            return servletNameSettingsMap;
+            parseNodes(servletList, servletMappingList, servletNameToUrlMap);
+            return servletNameToUrlMap;
         } catch (Exception e) {
             throw new RuntimeException("Can't parse file: " + xmlFile.getName(), e);
         }
     }
 
-    private static void parseNodes(NodeList servletList, NodeList servletMappingList, Map<String, String> servletNameSettingsMap) {
+    private static void parseNodes(NodeList servletList, NodeList servletMappingList, Map<String, String> servletNameToUrlMap) {
         for (int servletListIndex = 0; servletListIndex < servletList.getLength(); servletListIndex++) {
             Element servletElement = (Element) servletList.item(servletListIndex);
             String servletClass = extractTag(servletElement, SERVLET_CLASS_TAG);
@@ -56,10 +56,10 @@ public class ApplicationWebXmlParser {
             for (int servletMappingListIndex = 0; servletMappingListIndex < servletMappingList.getLength(); servletMappingListIndex++) {
                 Element mappingElement = (Element) servletMappingList.item(servletMappingListIndex);
                 String mappedServletName = extractTag(mappingElement, SERVLET_NAME_TAG);
-                String servletPath = extractTag(mappingElement, URL_PATTERN_TAG);
+                String url = extractTag(mappingElement, URL_PATTERN_TAG);
 
                 if (servletName.equals(mappedServletName)) {
-                    servletNameSettingsMap.put(servletClass, servletPath);
+                    servletNameToUrlMap.put(servletClass, url);
                 }
             }
         }

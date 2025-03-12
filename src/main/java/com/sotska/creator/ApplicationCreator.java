@@ -2,7 +2,7 @@ package com.sotska.creator;
 
 import com.sotska.entity.Application;
 import com.sotska.entity.ApplicationSettings;
-import com.sotska.loader.ServletClassLoaderService;
+import com.sotska.loader.ServletClassLoader;
 import jakarta.servlet.http.HttpServlet;
 
 import java.lang.reflect.Constructor;
@@ -17,12 +17,12 @@ public class ApplicationCreator {
     private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 
     public Application create(String applicationPath, ApplicationSettings applicationSettings) {
-        Map<String, HttpServlet> pathServletMap = applicationSettings.getUrlServletPathMap().entrySet().stream()
+        Map<String, HttpServlet> urlToServleteMap = applicationSettings.getServletNameToUrlMap().entrySet().stream()
                 .collect(toMap(Map.Entry::getValue, entry -> createInstance(applicationPath, entry.getKey()
                         .replace(SEPARATOR, "."))));
 
         Application application = new Application();
-        application.setPathServletMap(pathServletMap);
+        application.setUrlServletMap(urlToServleteMap);
         application.setAppName(applicationPath.substring(applicationPath.lastIndexOf(SEPARATOR) + SEPARATOR.length()));
 
         return application;

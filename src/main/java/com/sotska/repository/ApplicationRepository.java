@@ -16,10 +16,10 @@ public class ApplicationRepository {
         pathApplicationMap.remove(appName);
     }
 
-    public Application get(String appName, String path) throws IllegalArgumentException {
-        if (pathApplicationMap.containsKey(appName) && pathApplicationMap.get(appName).getPathServletMap().containsKey(path)) {
+    public Application get(String appName, String path) {
+        if (pathApplicationMap.containsKey(appName) && pathApplicationMap.get(appName).getUrlServletMap().containsKey(path)) {
             return pathApplicationMap.get(appName);
         }
-        throw new IllegalArgumentException("Application: " + appName);
+        throw new RuntimeException("Application: " + appName + " not exist.");
     }
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Application {
     private String appName;
-    private Map<String, HttpServlet> pathServletMap;
+    private Map<String, HttpServlet> urlServletMap;
 
     public String getAppName() {
         return appName;
@@ -16,11 +16,11 @@ public class Application {
         this.appName = appName;
     }
 
-    public Map<String, HttpServlet> getPathServletMap() {
-        return pathServletMap;
+    public Map<String, HttpServlet> getUrlServletMap() {
+        return urlServletMap;
     }
 
-    public void setPathServletMap(Map<String, HttpServlet> pathServletMap) {
-        this.pathServletMap = pathServletMap;
+    public void setUrlServletMap(Map<String, HttpServlet> urlServletMap) {
+        this.urlServletMap = urlServletMap;
     }
 }
