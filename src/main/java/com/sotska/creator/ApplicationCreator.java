@@ -29,8 +29,7 @@ public class ApplicationCreator {
     }
 
     private HttpServlet createInstance(String appPath, String servletPath) {
-        try {
-            URLClassLoader classLoader = new ServletClassLoaderService().getClassLoader(appPath);
+        try (URLClassLoader classLoader = new ServletClassLoader(appPath)) {
             Class<?> servletClass = classLoader.loadClass(servletPath);
             Constructor<?> constructor = servletClass.getConstructor();
 
