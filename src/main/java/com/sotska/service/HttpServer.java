@@ -10,20 +10,22 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class HttpServer {
+public class HttpServer implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
-    public static final int PORT = 8080;
 
     private final ApplicationRepository applicationRepository;
+    private final int port;
 
-    public HttpServer(ApplicationRepository applicationRepository) {
+    public HttpServer(ApplicationRepository applicationRepository, int port) {
         this.applicationRepository = applicationRepository;
+        this.port = port;
     }
 
-    public void start() {
-        LOGGER.info("Server started by port: {}", PORT);
+    @Override
+    public void run() {
+        LOGGER.info("Server started by port: {}", port);
 
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = serverSocket.accept();
                      InputStream inputStream = socket.getInputStream();

@@ -29,13 +29,18 @@ public class RequestExecutor {
         logger.info("Request: {} start executing.", request);
 
         Response response = new Response(outputStream);
+        var URI = request.getRequestURI();
+        boolean isRootURI = !URI.contains(SEPARATOR);
 
-        String appName = request.getRequestURI().substring(0, request.getRequestURI().indexOf(SEPARATOR));
-        String url = request.getRequestURI().substring(appName.length());
+        String appName = isRootURI ? URI : URI.substring(0, URI.indexOf(SEPARATOR));
+        String url = isRootURI ? "" : URI.substring(appName.length());
 
-        outputStream.write((addLineSeparator("HTTP/1.1 OK")).getBytes());
-
-        HttpServlet httpServlet = applicationRepository.get(appName, url).getUrlServletMap().get(url);
+        outputStream.write((addLineSeparator("HTTP/1.1 200 OK")).getBytes());
+        var optionalApplication = applicationRepository.get(appName);
+        if (optionalApplication.isEmpty()) {
+            return;
+        }
+        HttpServlet httpServlet = optionalApplication.get().getUrlServletMap().get(url);
 
         httpServlet.service(request, response);
         response.flushBuffer();
@@ -44,5 +49,4 @@ public class RequestExecutor {
     private static String addLineSeparator(String message) {
         return message + LINE_SEPARATOR + LINE_SEPARATOR;
     }
-
 }

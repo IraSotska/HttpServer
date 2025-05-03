@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.sotska.service.ApplicationListener.APPS_PATH;
 import static com.sotska.service.ApplicationListener.WAR_EXTENSION;
 
 
@@ -22,19 +21,22 @@ public class ApplicationDeploymentService {
     private final ApplicationWebXmlParser applicationWebXmlParser;
     private final UnzipService unzipService;
     private final ApplicationCreator applicationCreator;
+    private final String appsPath;
 
     public ApplicationDeploymentService(ApplicationRepository applicationRepository, UnzipService unzipService,
-                                        ApplicationWebXmlParser applicationWebXmlParser, ApplicationCreator applicationCreator) {
+                                        ApplicationWebXmlParser applicationWebXmlParser,
+                                        ApplicationCreator applicationCreator, String appsPath) {
         this.applicationRepository = applicationRepository;
         this.unzipService = unzipService;
         this.applicationWebXmlParser = applicationWebXmlParser;
         this.applicationCreator = applicationCreator;
+        this.appsPath = appsPath;
     }
 
     public void deployCurrentApplications() {
-        Arrays.stream(Objects.requireNonNull(new File(APPS_PATH).listFiles()))
+        Arrays.stream(Objects.requireNonNull(new File(appsPath).listFiles()))
                 .filter(file -> file.getName().endsWith(WAR_EXTENSION))
-                .forEach(file -> deployByPath(file.getAbsolutePath()));
+                .forEach(file -> unzipAndDeployAppByPath(file.getAbsolutePath()));
 
     }
 
@@ -44,18 +46,22 @@ public class ApplicationDeploymentService {
     }
 
     public void create(String applicationPath) {
-        deployByPath(applicationPath);
+        unzipAndDeployAppByPath(applicationPath);
     }
 
     public void update(String applicationName) {
-        deployByPath(applicationName);
+        unzipAndDeployAppByPath(applicationName);
     }
 
-    private void deployByPath(String applicationPath) {
+    private void unzipAndDeployAppByPath(String applicationPath) {
         LOGGER.info("Deploy: {}", applicationPath);
         String outputPath = unzipService.unzip(applicationPath);
-        ApplicationSettings settings = applicationWebXmlParser.parse(outputPath);
-        Application application = applicationCreator.create(outputPath, settings);
+        deploy(outputPath);
+    }
+
+    protected void deploy(String appPath) {
+        ApplicationSettings settings = applicationWebXmlParser.parse(appPath);
+        Application application = applicationCreator.create(appPath, settings);
         applicationRepository.add(application.getAppName(), application);
     }
 }

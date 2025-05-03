@@ -3,6 +3,7 @@ package com.sotska.repository;
 import com.sotska.entity.Application;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ApplicationRepository {
@@ -16,10 +17,10 @@ public class ApplicationRepository {
         pathApplicationMap.remove(appName);
     }
 
-    public Application get(String appName, String path) {
-        if (pathApplicationMap.containsKey(appName) && pathApplicationMap.get(appName).getUrlServletMap().containsKey(path)) {
-            return pathApplicationMap.get(appName);
+    public Optional<Application> get(String appName) {
+        if (pathApplicationMap.containsKey(appName)) {
+            return Optional.of(pathApplicationMap.get(appName));
         }
-        throw new RuntimeException("Application: " + appName + " not exist.");
+        return Optional.empty();
     }
 }

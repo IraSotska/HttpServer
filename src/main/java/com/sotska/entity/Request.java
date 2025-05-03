@@ -19,6 +19,10 @@ public class Request implements HttpServletRequest {
 
     private Map<String, String> parameters = new HashMap<>();
 
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
     @Override
     public String getAuthType() {
         return null;
@@ -440,4 +444,16 @@ public class Request implements HttpServletRequest {
         this.session = session;
     }
 
+    @Override
+    public String toString() {
+        return "Request{" +
+                "inputStream=" + inputStream +
+                ", requestURI='" + requestURI + '\'' +
+                ", method='" + method + '\'' +
+                ", contextPath='" + contextPath + '\'' +
+                ", headers=" + headers +
+                ", session=" + session +
+                ", parameters=" + parameters +
+                '}';
+    }
 }

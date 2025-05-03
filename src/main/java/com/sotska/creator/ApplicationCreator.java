@@ -23,7 +23,7 @@ public class ApplicationCreator {
 
         Application application = new Application();
         application.setUrlServletMap(urlToServleteMap);
-        application.setAppName(applicationPath.substring(applicationPath.lastIndexOf(SEPARATOR) + SEPARATOR.length()));
+        application.setAppName(applicationSettings.getName());
 
         return application;
     }

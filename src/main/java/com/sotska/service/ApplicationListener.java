@@ -7,19 +7,20 @@ import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class ApplicationListener implements Runnable {
-    public static final String APPS_PATH = "apps";
     public static final String SEPARATOR = FileSystems.getDefault().getSeparator();
     public static final String WAR_EXTENSION = ".war";
     private final ApplicationDeploymentService applicationDeploymentService;
+    private final String appsPath;
 
-    public ApplicationListener(ApplicationDeploymentService applicationDeploymentService) {
+    public ApplicationListener(ApplicationDeploymentService applicationDeploymentService, String appsPath) {
         this.applicationDeploymentService = applicationDeploymentService;
+        this.appsPath = appsPath;
     }
 
     @Override
     public void run() {
         try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
-            Path path = Path.of(APPS_PATH);
+            Path path = Path.of(appsPath);
             path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
             boolean poll = true;
 
@@ -46,7 +47,7 @@ public class ApplicationListener implements Runnable {
             return;
         }
         if (kind == ENTRY_CREATE) {
-            applicationDeploymentService.create(Paths.get(APPS_PATH, applicationName).toString());
+            applicationDeploymentService.create(Paths.get(appsPath, applicationName).toString());
         } else if (kind == ENTRY_MODIFY) {
             applicationDeploymentService.update(applicationName);
         } else if (kind == ENTRY_DELETE) {
